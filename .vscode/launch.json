@@ -1,0 +1,17 @@
+{
+  "configurations": [
+    {
+      "args": [
+        "run",
+        "embeddingviz/app.py"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "module": "streamlit",
+      "name": "Streamlit",
+      "request": "launch",
+      "type": "python"
+    }
+  ],
+  "version": "0.2.0"
+}

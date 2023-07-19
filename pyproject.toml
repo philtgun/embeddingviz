@@ -1,2 +1,54 @@
-[tool.isort]
-line_length = 120
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "embeddingviz"
+description = "Visualization of music-text embeddings spaces "
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    {name = "Philip Tovstogan", email = "phil.tgun@gmail.com"}
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+]
+dynamic = ["version"]
+
+dependencies = [
+    "streamlit~=1.24",
+    "requests~=2.31",
+    "python-dotenv~=1.0",
+    "transformers~=4.31",
+    "torch~=2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    # code quality
+    "black>=23.1.0",
+    "ruff>=0.0.259",
+    "pre-commit>=3.2.0",
+    "mypy>=1.1.1",
+    # local dev
+    "types-requests~=2.31",
+]
+test = [
+]
+
+
+[tool.hatch.version]
+path = "embeddingviz/__init__.py"
+
+[tool.black]
+line-length = 120
+
+[tool.ruff]
+line-length = 120
+
+[[tool.mypy.overrides]]
+module = [
+    "transformers",
+]
+ignore_missing_imports = true
