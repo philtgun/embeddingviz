@@ -1,0 +1,1 @@
+# Only add explicit dependencies with dep==version
