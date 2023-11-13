@@ -1,43 +1,39 @@
 import os
-from time import sleep
 
 import dotenv
-import requests
 import streamlit as st
-from transformers import ClapModel, ClapProcessor
+from audio_plot import audio_plot
+from umap import UMAP
+
+from embeddingviz.datasets import DATASETS, get_dataset
+from embeddingviz.models import MODELS, get_model
+from embeddingviz.processor import get_processor
 
 dotenv.load_dotenv()
 
 api_token = os.getenv("HUGGINGFACE_TOKEN")
 
+st.set_page_config(layout="wide")
 
-model_select = st.selectbox("Select a model", ["", "CLAP", "Other"], index=0)
+with st.sidebar:
+    dataset_select = st.selectbox("Dataset", list(DATASETS))
+    model_select = st.selectbox("Select a model", list(MODELS))
 
-if model_select == "CLAP":
-    model_name = "laion/clap-htsat-unfused"
-    model = ClapModel.from_pretrained(model_name)
-    processor = ClapProcessor.from_pretrained(model_name)
-    inputs = processor(text="metalcore with female vocals", return_tensors="pt")
-    embdeddings = model.get_text_features(**inputs)
-    st.write(embdeddings)
-    st.write(len(embdeddings[0]))
+if dataset_select is not None and model_select is not None:
+    dataset = get_dataset(dataset_select)
+    model = get_model(model_select)
 
+    dataset_paths = dataset.get_audio_paths()[:5]
 
-# Trying api, doesn't work :(
-if st.button("Test HuggingFace API"):
-    retry = True
-    while retry:
-        result = requests.post(
-            url="https://api-inference.huggingface.co/models/laion/clap-htsat-unfused",
-            headers={"Authorization": f"Bearer {api_token}"},
-            json={"inputs": [["metalcore with female vocals"]]},
-        )
-        if result.status_code == 503:
-            wait_time = result.json()["estimated_time"] + 1.0
-            with st.spinner(f"Waiting {wait_time:.0f} seconds for the model to load..."):
-                sleep(wait_time)
-            retry = True
-        else:
-            retry = False
+    processor = get_processor(model)
+    with st.spinner("Processing audio..."):  # TODO offline
+        embeddings = processor.process_audio_batch(dataset_paths.to_list(), model)
 
-    st.write(result.status_code, result.json())
+    umap = UMAP(n_components=2)
+    with st.spinner("Projecting onto 2D..."):  # TODO offline
+        projected_embeddings = umap.fit_transform(embeddings)
+
+    labels = dataset.get_labels()[:5]
+    urls = dataset.get_urls()[:5]
+
+    audio_plot(projected_embeddings, urls, labels)

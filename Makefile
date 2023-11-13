@@ -1,11 +1,11 @@
 .PHONY: format
 format:
-	black embeddingviz
+	ruff format .
 
 .PHONY: lint
 lint:
-	ruff embeddingviz
-	mypy embeddingviz
+	ruff .
+	mypy .
 
 .PHONY: initdev
 initdev:

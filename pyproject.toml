@@ -7,9 +7,7 @@ name = "embeddingviz"
 description = "Visualization of music-text embeddings spaces "
 readme = "README.md"
 requires-python = ">=3.11"
-authors = [
-    {name = "Philip Tovstogan", email = "phil.tgun@gmail.com"}
-]
+authors = [{ name = "Philip Tovstogan", email = "phil.tgun@gmail.com" }]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
@@ -22,20 +20,22 @@ dependencies = [
     "python-dotenv~=1.0",
     "transformers~=4.31",
     "torch~=2.0",
+    "plotly~=5.15",
+    "pandas~=2.1",
+    "streamlit-audio-plot~=0.0",
 ]
 
 [project.optional-dependencies]
 dev = [
     # code quality
-    "black>=23.1.0",
-    "ruff>=0.0.259",
+    "ruff>=0.1.5",
     "pre-commit>=3.2.0",
     "mypy>=1.1.1",
     # local dev
     "types-requests~=2.31",
+    "pandas-stubs~=2.1",
 ]
-test = [
-]
+test = []
 
 
 [tool.hatch.version]
@@ -48,7 +48,5 @@ line-length = 120
 line-length = 120
 
 [[tool.mypy.overrides]]
-module = [
-    "transformers",
-]
+module = ["transformers", "torchaudio", "networkx", "matplotlib"]
 ignore_missing_imports = true
